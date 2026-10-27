@@ -23,7 +23,7 @@ const tools = [
   {
     name: "find_lecture",
     description:
-     "Find information about a numbered item stored in the course data.",
+  "Find a course lecture by its number and return its title and topics.",
     inputSchema: {
       type: "object",
       properties: {
