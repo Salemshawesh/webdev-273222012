@@ -79,4 +79,4 @@ The server responded correctly to the initialize request and returned both tools
 
 ## The description experiment
 
-<!-- Three sentences: what you changed in the description, whether the model chose the tool differently, and why you think so. Complete this after testing with Gemini CLI. -->
+I changed the `find_lecture` description from "Find a course lecture by its number and return its title and topics" to "Find information about a numbered item stored in the course data". When I asked Gemini the same question about lecture 7, it still selected the `find_lecture` tool and returned the correct lecture information. I think Gemini chose the same tool because its name and input schema still matched the question, even though the new description was less specific.
