@@ -1,3 +1,4 @@
+
 # Exercise 1 · MCP server
 
 Your hand-written MCP server lives in this folder. Write it in any language you like. The full task is on the exercise page; this file is the short version plus your notes.
@@ -14,6 +15,8 @@ Your hand-written MCP server lives in this folder. Write it in any language you 
 
 1. **`find_lecture`**: everyone writes this one. Input: `number` (1 to 10). It returns the title and topics of that lecture from `lectures.json`. A number outside the range is not a crash and not a protocol error: it is a result with `isError: true` and a readable message.
 2. **One of your own**: anything useful that reads local data. Give it a description a model can choose by. Every tool needs one: the self-check applies the same rule to all of them, because a description is the only thing a model reads when it decides what to call.
+
+My second tool is `list_lectures`. It reads `lectures.json` and shows all available lectures with their numbers and titles.
 
 ## Where this goes next
 
@@ -36,11 +39,44 @@ node mcp-server/check.mjs -- npm run --silent mcp
 
 It prints one line per check. Fix the failures yourself: the agent may explain a message or review your handler, but it must not write the protocol code for you.
 
+My result:
+
+**12/12 checks passed successfully.**
+
 ## How to start it
-<!-- The exact command, so the lecturer can run your server too. -->
+
+Run the MCP server from the project root:
+
+```bash
+node mcp-server/server.js
+```
+
+To check if the server works:
+
+```bash
+node mcp-server/check.mjs -- node mcp-server/server.js
+```
+
+All 12 checks passed successfully.
+
+The server reads messages from standard input and sends JSON-RPC responses through standard output.
 
 ## Session transcript
-<!-- Paste one full session: initialize, the reply, tools/list, one good tools/call, one that fails. -->
+
+```text
+got: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0.0"}}}
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-11-25","capabilities":{"tools":{}},"serverInfo":{"name":"lectures-server","version":"1.0.0"}}}
+got: {"jsonrpc":"2.0","method":"notifications/initialized"}
+got: {"jsonrpc":"2.0","id":2,"method":"tools/list"}
+{"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"find_lecture","description":"Find a course lecture by its number and return its title and topics.","inputSchema":{"type":"object","properties":{"number":{"type":"integer","description":"Lecture number from 1 to 10"}},"required":["number"]}},{"name":"list_lectures","description":"List all available course lectures with their numbers and titles.","inputSchema":{"type":"object","properties":{}}}]}}
+got: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_lecture","arguments":{"number":5}}}
+{"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"What the agent built, part 1\nTopics: HTTP, REST vs GraphQL, data modeling, ORM, layers"}]}}
+got: {"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"find_lecture","arguments":{"number":99}}}
+{"jsonrpc":"2.0","id":4,"result":{"content":[{"type":"text","text":"Lecture 99 not found"}],"isError":true}}
+```
+
+The server responded correctly to the initialize request and returned both tools when requested. The `find_lecture` tool returned the title and topics for lecture 5. When I requested lecture 99, it returned `isError: true` with a readable message instead of crashing.
 
 ## The description experiment
-<!-- Three sentences: what you changed in the description, whether the model chose the tool differently, and why you think so. -->
+
+<!-- Three sentences: what you changed in the description, whether the model chose the tool differently, and why you think so. Complete this after testing with Gemini CLI. -->
