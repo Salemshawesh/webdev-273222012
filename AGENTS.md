@@ -7,15 +7,27 @@ Read this file at the start of every session. Keep it short and correct; update 
 See `SPEC.md` for goals, non-goals and acceptance criteria.
 
 ## Commands
-<!-- How to install, run, test. Keep these exact and working. -->
-- Install: 
-- Run: 
-- Test: 
-- Coverage: 
-- MCP server: 
+
+- Install: `npm install`
+- Run: `npm run mcp`
+- Test: `node mcp-server/check.mjs -- npm run --silent mcp`
+- Coverage: Not configured yet. Will be added in Exercise 4.
+- MCP server: `node mcp-server/server.js`
+
 
 ## Conventions
-<!-- Folder layout, naming, where business rules live, how errors are returned to the client. -->
+
+- The project uses JavaScript and Node.js.
+- Use camelCase for variables and functions.
+- Keep backend code in `src/`.
+- Keep HTTP routes in `src/routes/`.
+- Keep business rules in `src/services/`.
+- Keep database queries separate from business logic.
+- Keep frontend HTML, CSS and JavaScript in `public/`.
+- Keep automated tests in `test/`.
+- HTTP routes return JSON responses with correct status codes.
+- MCP tools must use the same service functions as HTTP routes.
+- Never commit passwords or API keys.
 
 ## Layers
 <!-- Fill in the file or folder for each layer. -->
@@ -30,7 +42,7 @@ that talks to the database directly is a second, unguarded way into your data: n
 
 ## The model feature
 <!-- Provider, env var, and the call site. -->
-- The provider is named in exactly one file: 
+- The provider is named in exactly one file:
 - The key comes from an environment variable and is never committed or logged.
 - Every call has a timeout and a deterministic fallback, so the app still works when the provider is down or rate-limited.
 - The model's output is re-checked against real data before anything is saved or shown.
