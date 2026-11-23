@@ -4,14 +4,17 @@ Read this file at the start of every session. Keep it short and correct; update 
 
 ## Project
 <!-- One or two sentences: what the app does and for whom. Link SPEC.md. -->
-See `SPEC.md` for goals, non-goals and acceptance criteria.
+Campus Club Events lets students browse upcoming university club events. See `SPEC.md` for goals, non-goals and acceptance criteria; only event listing is currently implemented.
 
 ## Commands
 
 - Install: `npm install`
-- Run: `npm run mcp`
-- Test: `node mcp-server/check.mjs -- npm run --silent mcp`
-- Coverage: Not configured yet. Will be added in Exercise 4.
+- Run web app: `npm start` (port 3000, or `PORT`)
+- Seed demo events explicitly: `npm run seed` (preserves existing events)
+- Run MCP: `npm run mcp`
+- Test app: `npm test`
+- Test MCP: `node mcp-server/check.mjs -- npm run --silent mcp`
+- Coverage: `npm run coverage` (100% service lines/functions/branches, 80% overall lines)
 - MCP server: `node mcp-server/server.js`
 
 
@@ -33,8 +36,10 @@ See `SPEC.md` for goals, non-goals and acceptance criteria.
 <!-- Fill in the file or folder for each layer. -->
 Requests arrive two ways and both end in the same place:
 
-- HTTP route handler → service → data access → database
+- `src/app.js` → `src/routes/events.js` → `src/services/events.js` → `src/data/events.js` → SQLite (`DATABASE_PATH`, default `campus.sqlite`)
 - MCP tool → **the same service** → data access → database
+
+The project MCP tools are still pending approval and implementation. The two existing lecture tools remain in place. Numbered migrations are in `src/migrations/`; do not edit one after it has run. SQLite is for local use; the course requires Neon PostgreSQL for deployment.
 
 A route handler reads the request and turns a result into a status code. A service holds the
 rules and knows nothing about HTTP or about MCP. Only the data layer writes SQL. An MCP tool

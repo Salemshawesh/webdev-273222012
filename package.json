@@ -7,8 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "mcp": "node mcp-server/server.js"
+    "test": "node --test",
+    "seed": "node src/seed.js",
+    "coverage:services": "node --test --experimental-test-coverage --test-coverage-include='src/services/**' --test-coverage-exclude='test/**' --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100",
+    "coverage": "npm run coverage:services && node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='test/**' --test-coverage-lines=80",
+    "mcp": "node mcp-server/server.js",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +24,13 @@
   "bugs": {
     "url": "https://github.com/Salemshawesh/webdev-273222012/issues"
   },
-  "homepage": "https://github.com/Salemshawesh/webdev-273222012#readme"
+  "homepage": "https://github.com/Salemshawesh/webdev-273222012#readme",
+  "dependencies": {
+    "express": "^5.3.0",
+    "jose": "^6.2.17",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
 }

@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Club Events</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/events.js" defer></script>
+    <script src="/account.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <h1>Campus Club Events</h1>
+        <p>Find events and meet new people at university</p>
+    </header>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#events">Events</a>
+        <a href="#account">Account</a>
+        <a href="#registrations">My registrations</a>
+        <a href="#suggestions">Suggestions</a>
+    </nav>
+
+    <main id="home">
+
+        <section class="welcome">
+            <h2>Welcome!</h2>
+            <p>This website is for students who want to find
+            interesting events and activities at university.</p>
+        </section>
+
+        <section id="events" class="box">
+            <h2>Upcoming Events</h2>
+            <p id="events-status" role="status">Loading events…</p>
+            <div id="events-list"></div>
+            <button id="retry-events" type="button">Refresh events</button>
+        </section>
+
+        <section id="account" class="box">
+            <h2>Student Account</h2>
+            <p id="account-status" role="status">Loading account…</p>
+            <div id="auth-forms">
+                <form id="login-form">
+                    <h3>Sign in</h3>
+                    <label for="login-email">Email</label><input id="login-email" name="email" type="email" required autocomplete="username">
+                    <label for="login-password">Password</label><input id="login-password" name="password" type="password" minlength="10" maxlength="128" required autocomplete="current-password">
+                    <button>Sign in</button>
+                </form>
+                <p><a href="/auth/google">Sign in with Google</a></p>
+                <form id="register-form">
+                    <h3>Create an account</h3>
+                    <label for="register-email">Email</label><input id="register-email" name="email" type="email" required autocomplete="email">
+                    <label for="register-password">Password (10–128 characters)</label><input id="register-password" name="password" type="password" minlength="10" maxlength="128" required autocomplete="new-password">
+                    <button>Create account</button>
+                </form>
+            </div>
+            <div id="signed-in" hidden><button id="logout" type="button">Sign out</button></div>
+        </section>
+
+        <section id="registrations" class="box">
+            <h2>My registrations</h2>
+            <p id="registrations-status" role="status">Sign in to see your registrations.</p>
+            <ul id="registrations-list"></ul>
+            <button id="retry-registrations" type="button">Refresh registrations</button>
+        </section>
+        <section id="suggestions" class="box">
+            <h2>Event suggestions</h2>
+            <p>Your interests and public event details are sent to Google when suggestions are available. Do not include personal or sensitive information. If the provider is unavailable, events are shown in date order.</p>
+            <form id="suggestion-form">
+                <label for="interests">Your interests</label><textarea id="interests" name="interests" maxlength="500" required></textarea>
+                <button>Suggest events</button>
+            </form>
+            <p id="suggestions-status" role="status">Sign in and enter your interests to request suggestions.</p>
+            <ul id="suggestions-list"></ul>
+        </section>
+        <section id="organizer" class="box" hidden>
+            <h2>Manage events</h2>
+            <p>Create an event, or enter the ID of your own event to edit its title, date and location. Capacity is set when creating an event.</p>
+            <form id="event-form">
+                <label for="event-id">Event ID (leave empty to create)</label><input id="event-id" name="eventId" type="number" min="1">
+                <label for="event-name">Title</label><input id="event-name" name="name" maxlength="120" required>
+                <label for="event-date">Date</label><input id="event-date" name="date" type="date" required>
+                <label for="event-place">Location</label><input id="event-place" name="place" maxlength="160" required>
+                <label for="event-capacity">Capacity</label><input id="event-capacity" name="capacity" type="number" min="1" max="10000" value="20" required>
+                <button>Save event</button>
+            </form>
+            <p id="organizer-status" role="status">No changes yet.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Campus Club Events - Student Project</p>
+    </footer>
+
+</body>
+</html>

@@ -1,4 +1,10 @@
 const fs = require("node:fs");
+const { projectTools, createProjectTools } = require("./project");
+let project;
+async function projectCall(name, args) {
+  if (!project) project = require("../src/data/store").openStore().then(data => createProjectTools(data, process.env.MCP_TOKEN));
+  return (await project)(name, args);
+}
 const path = require("node:path");
 const readline = require("node:readline");
 
@@ -20,6 +26,7 @@ function listLectures() {
 
 // ─── Tool definitions ─────────────────────────────────────────────────────────
 const tools = [
+  ...projectTools,
   {
     name: "find_lecture",
     description:
@@ -70,9 +77,9 @@ const input = readline.createInterface({
   input: process.stdin,
 });
 
-input.on("line", (line) => {
+input.on("line", async (line) => {
   // Required by Lab 1: log every incoming message to stderr
-  console.error("got: " + line);
+  // Log protocol metadata only: tokens and personal tool arguments stay out of logs.
 
   let request;
 
@@ -84,6 +91,7 @@ input.on("line", (line) => {
   }
 
   const { id, method, params } = request;
+  console.error("got method: " + method);
 
   // 2. Check which method the client requested
   switch (method) {
@@ -97,6 +105,13 @@ input.on("line", (line) => {
     case "tools/call": {
       const toolName = params?.name;
       const args = params?.arguments ?? {};
+
+      if (projectTools.some(tool => tool.name === toolName)) {
+        const result = await projectCall(toolName, args).catch(() => ({ isError: true, content: [{ type: "text", text: "The database is unavailable. Please try again." }] }));
+        if (result.protocolError) sendError(id, -32602, result.protocolError);
+        else sendResponse(id, result);
+        return;
+      }
 
       if (toolName === "find_lecture") {
         const lecture = findLecture(args.number);

@@ -72,7 +72,17 @@ The application will have separate routes, services, and database access files.
 
 HTTP routes and MCP tools will both call the same service layer. The service layer will contain the business rules, and only the data layer will access the database.
 
-The exact file-by-file request trace will be documented in Exercise 3 after implementation.
+The current list request is documented below. Later authenticated flows remain unimplemented.
+
+### Current request trace
+
+`npm start` runs `src/server.js`, which opens the database with `openEventsDatabase()` and passes it to `createApp()` in `src/app.js`. Express serves `public/index.html`. Its deferred script, `public/events.js`, calls `loadEvents()` and fetches `GET /api/events` using the same origin as the page.
+
+`eventRoutes()` in `src/routes/events.js` calls `listEvents()` from `createEventService()` in `src/services/events.js`. The service supplies today's UTC date to `listUpcoming()` in `src/data/events.js`. That function runs a parameterized SQLite query filtering dates on or after today and ordering by date and ID. Only the data layer contains SQL. The database is `campus.sqlite` by default; `DATABASE_PATH` selects another file. `001-events.sql` creates the table and a migration ledger prevents applying it twice.
+
+The service maps rows to public objects containing `id`, `name`, `date`, `place` and `capacity`. The route serializes an array as JSON. In the browser `loadEvents()` keeps the result in its local `events` variable and builds articles in `#events-list`, using `textContent` for titles, dates and locations. Express sends the HTML shell; the browser renders the changing list. While waiting it says “Loading events…”. An empty array shows a distinct empty message; a failed request shows a retry message. The Refresh events button reruns the same request without duplicating cards.
+
+The previous boundary problem was the in-memory event array inside `src/server.js`, with no service or database. That has been replaced. A remaining limitation is that the service's public object uses the original frontend names `name` and `place`, which are also database column names; the explicit mapping is where they can change independently later.
 
 ## Acceptance criteria
 
@@ -98,11 +108,13 @@ The automated tests will be added alongside the implementation in Exercises 2 an
 
 | Criterion | Test |
 |---|---|
-| AC-1 | Pending implementation |
-| AC-2 | Pending implementation |
-| AC-3 | Pending implementation |
+| AC-1 | Pending authentication approval and implementation |
+| AC-2 | Pending authentication approval and implementation |
+| AC-3 | `test/events.test.js` (service and real HTTP), `test/homepage.test.js` (renderer with a DOM double) |
 | AC-4 to AC-10 | Pending later features |
 
 ## Spec vs result
 
-The first slice has not been implemented yet. After building the login and event listing, I will record which acceptance criteria passed, what the agent missed, and any changes I made to the specification.
+On 2026-11-17 the original Lab 1 check passed 12/12 and the Exercise 2 structural check passed 32/32. These did not prove the slice worked: the homepage originally loaded no JavaScript and the API returned an in-memory list. AC-3 now has a database-backed list, a loaded renderer, explicit empty/error/loading states, and service, HTTP and renderer tests. The three existing sample events were preserved as explicitly seeded database rows dated December 2026. No automatic reseeding occurs at startup.
+
+AC-1, AC-2 and AC-4–AC-10 remain pending; the first slice and later labs are not complete. No acceptance criterion was weakened or replaced. The Exercise 2 page says the list requires sign-in, while AC-3 and the MCP table explicitly permit visitors. The implementation currently follows the exact AC-3; resolving that course/spec difference requires the student's decision. Browser refresh, real provider sign-in, production persistence, peer review and CI results must not be claimed until observed.
