@@ -6,9 +6,11 @@ const { createApp } = require('../src/app');
 async function run() {
     const data = await openStore({ filename: ':memory:', url: '' });
     await data.addEvent({ name: 'Coding Club Meeting', date: '2099-12-03', place: 'Computer Lab', capacity: 1 });
-    const server = createApp(data, { modelClient: async () => { await new Promise(resolve => setTimeout(resolve, 400)); throw new Error('fake provider down'); } }).listen(0, '127.0.0.1');
+    const server = require('node:http').createServer();
+    server.listen(0, '127.0.0.1');
     await new Promise(resolve => server.once('listening', resolve));
     const base = `http://127.0.0.1:${server.address().port}`;
+    server.on('request', createApp(data, { baseUrl: base, modelClient: async () => { await new Promise(resolve => setTimeout(resolve, 400)); throw new Error('fake provider down'); } }));
     let browser;
     try {
         browser = await chromium.launch({ headless: true });
@@ -75,7 +77,12 @@ async function run() {
         await page.screenshot({ path: 'docs/screenshots/suggestions-loading.png', fullPage: true });
         await page.getByText('Suggestions are unavailable. Here are the next upcoming events.', { exact: true }).waitFor();
         await page.screenshot({ path: 'docs/screenshots/suggestions-fallback.png', fullPage: true });
-        await page.getByRole('button', { name: 'Sign out', exact: true }).focus();
+        // Use a real Tab key so the browser shows its keyboard focus outline.
+        for (let step = 0; step < 40; step++) {
+            await page.keyboard.press('Tab');
+            if (await page.locator('#logout:focus').count()) break;
+        }
+        assert.equal(await page.locator('#logout:focus').count(), 1);
         assert.notEqual(await page.locator('#logout').evaluate(el => getComputedStyle(el).outlineStyle), 'none');
         await page.keyboard.press('Enter');
         await page.getByText('Sign in to register for events.', { exact: true }).waitFor();
